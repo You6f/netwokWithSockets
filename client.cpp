@@ -3,6 +3,7 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include <fstream>
 
 #define PORT 8080
 
@@ -10,7 +11,8 @@ int main()
 {
     int sock = 0;
     struct sockaddr_in serv_addr;
-    char buffer[1024] = {0};
+    char bufferSend[1024] = {0};
+    char bufferRead[1024] = {0};
 
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
@@ -34,8 +36,15 @@ int main()
         return -1;
     }
 
-    int valread = read(sock, buffer, 1024);
-    std::cout << buffer << std::endl;
+    std::string sms = "bonjour c le client\n"; // test
+    send(sock, sms.c_str(), sms.size(), 0);    // test
 
+    //------------reception message du serveur-------------------------
+    // int valread = read(sock, bufferSend, 1024);
+    // std::cout << bufferSend << std::endl;
+    //------------reception message du serveur-------------------------
+    int valread = read(sock, bufferRead, 1024); // lecture du socket et mettre valeur dans bufferRead
+    std::ofstream DATA("data.json");            // creation du fichier data.json
+    DATA << bufferRead;                         // mettre le contenu de bufferRead dans data
     return 0;
 }
